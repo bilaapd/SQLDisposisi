@@ -1,0 +1,131 @@
+CREATE TABLE magang.Jabatan (
+    Jabatan_Id INT PRIMARY KEY,
+    Kategori  ENUM('ASN', 'Tenaga Ahli') NOT NULL,
+    Jabatan_Struktural VARCHAR(100) ,
+    Jabatan_Fungsional VARCHAR(100) NOT NULL
+);
+
+Create Table magang.Pegawai (
+Pegawai_Id VARCHAR(100) PRIMARY KEY,
+Nama VARCHAR(100) NOT NULL,
+Divisi VARCHAR (200) NOT NULL,
+Id_Jabatan INT NOT NULL,
+FOREIGN KEY (Id_Jabatan) REFERENCES magang.Jabatan(Jabatan_Id)
+);
+
+create table magang.SuratDisposisi (
+No_Surat VARCHAR(100) PRIMARY KEY,
+Pengirim VARCHAR (200) NOT NULL,
+Judul_Kegiatan VARCHAR (200) NOT NULL,
+Tanggal_Surat DATE NOT NULL
+);
+
+CREATE TABLE magang.KegiatanDisposisi (
+Disposisi_Id VARCHAR(100) PRIMARY KEY,
+Konfirmasi VARCHAR(50) NOT NULL,
+Tanggal_Disposisi DATE NOT NULL,
+Nomor_Surat_Disposisi VARCHAR (200) NOT NULL,
+Id_Pegawai_JSC VARCHAR(100) NOT NULL,
+FOREIGN KEY (Nomor_Surat_Disposisi) REFERENCES magang.suratdisposisi (No_Surat),
+FOREIGN KEY (Id_Pegawai_JSC) REFERENCES magang.Pegawai (Pegawai_Id)
+);
+
+INSERT INTO magang.KegiatanDisposisi (Disposisi_Id, Konfirmasi, Tanggal_Disposisi, Nomor_Surat_Disposisi, Id_Pegawai_JSC) VALUES 
+('D001', 'Ya', '2024-07-01', 'S001', 'PG01'),
+('D002', 'Tidak', '2024-07-05', 'S002', 'PG03'),
+('D003', 'Ya', '2024-07-10', 'S003', 'PG05'),
+('D004', 'Ya', '2024-07-12', 'S004', 'PG13'),
+('D005', 'Tidak', '2024-07-15', 'S005', 'PG09');
+
+CREATE TABLE magang.DisposisiType (
+DisposisiType_Id VARCHAR(100) PRIMARY KEY,
+Nama_Disposisi VARCHAR(50) NOT NULL,
+Id_Jabatan_Pegawai INT NOT NULL,
+Id_Disposisi VARCHAR(100) NOT NULL,
+FOREIGN KEY (Id_Jabatan_Pegawai) REFERENCES magang.Jabatan (Jabatan_Id),
+FOREIGN KEY (Id_Disposisi) REFERENCES magang.KegiatanDisposisi (Disposisi_Id)
+);
+
+INSERT INTO magang.DisposisiType (DisposisiType_Id, Nama_Disposisi, Id_Jabatan_Pegawai, Id_Disposisi) VALUES
+('DT002', 'Koordinasi Penanganan Malaria', '02', 'D002')
+DT003, Program Beasiswa, JD03, D003
+DT004, Sosialisasi Perubahan Rute, JD04, D004
+DT005, Kampanye Kesadaran Bencana, JD05, D005
+
+create table magang.Pekerjaan(
+Pekerjaan_Id VARCHAR(100) PRIMARY KEY,
+Tanggal_ditugaskan DATETIME NOT NULL,
+Tenggat_Waktu DATETIME NOT NULL,
+Nomor_Surat VARCHAR(100) NOT NULL,
+Id_Disposisi_Pekerjaan VARCHAR(100) NOT NULL,
+FOREIGN KEY (Nomor_Surat) REFERENCES magang.SuratDisposisi(No_Surat),
+FOREIGN KEY (Id_Disposisi_Pekerjaan) REFERENCES magang.KegiatanDisposisi(Disposisi_Id)
+);
+
+CREATE TABLE magang.Workload(
+Id_Pekerjaan VARCHAR(100) NOT NULL,
+Id_Pegawai VARCHAR(100) NOT NULL,
+Status_Pekerjaan VARCHAR(100) NOT NULL,
+Feedback VARCHAR(300) NOT NULL,
+FOREIGN KEY (Id_Pekerjaan) REFERENCES magang.Pekerjaan(Pekerjaan_Id),
+FOREIGN KEY (Id_Pegawai) REFERENCES magang.Pegawai(Pegawai_Id),
+PRIMARY KEY(Id_Pekerjaan, Id_Pegawai)
+);
+
+INSERT INTO magang.jabatan (jabatan_Id, Kategori, Jabatan_Struktural, Jabatan_Fungsional) VALUES
+(01, 'ASN',  'Eselon I', 'Kepala Unit'),
+(02, 'ASN', 'Eselon II', 'Kepala Bagian'),
+(03, 'ASN', 'Eselon III', 'Kepala Satuan Pleaksana'),
+(04, 'Tenaga Ahli','Assistan Professional Staff ','Manajer'),
+(05,'Tenaga Ahli' ,'Data Entry', 'Staff');
+
+   
+('PG02', 'Wardahnia', 'Komunikasi dan Pemasaran', '03'),
+('PG03', 'Budi Supriyanto', 'Perangkat dan Jaringan Teknologi Informasi', 03),
+('PG04', 'Galih Setiawan', 'Perangkat dan Jaringan Teknologi Informasi', 04),
+('PG05', 'Ari Setiobudi', 'Pemasaran dan Komunikasi', 04),
+('PG06', 'Saffar Masyhur', 'Operasional dan Respon', 04),
+('PG07', 'Putri Yasmin', 'Kemitraan dan Ekosistem Digital', '04'),
+('PG08', 'Hamdi', 'Manajemen Produk dan Layanan', 04),
+('PG09', 'Annida Fitriyya', 'Kajian dan Analisa Data', 04),
+('PG10', 'Toto Riyanto', 'Kemitraan dan Ekosistem Digital', 05),
+('PG11', 'Rizka Nadhira', 'Manajemen Produk dan Layanan', 05),
+('PG12', 'Daniel Sitorus', 'Operasional dan Respon', 05),
+('PG13', 'Aditya Gagat', 'Pemasaran dan Komunikasi', 05),
+('PG14', 'Annisa Tahira', 'Pengembangan Produk dan Layanan', 05),
+('PG15', 'Berry Hardi', 'Perangkat dan Jaringan Teknologi Informasi', 05);
+
+INSERT INTO magang.SuratDisposisi (No_Surat, Pengirim, Judul_Kegiatan, Tanggal_Surat) VALUES
+('S001', 'Dinas Kesehatan DKI Jakarta', 'Informasi Vaksin COVID 19', '2024-07-01'),
+('S002', 'Kementerian Kesehatan', 'Penanganan Wabah Malaria', '2024-07-05'),
+('S003', 'Dinas Pendidikan', 'Program Beasiswa', '2024-07-10'),
+('S004', 'Dinas Perhubungan', 'Perubahan Rute TransJakarta', '2024-07-12'),
+('S005', 'Badan Meteorologi, Klimatologi, dan Geofisika', 'Peringatan Dini Bencana', '2024-07-15');
+
+
+INSERT INTO magang.pekerjaan (Pekerjaan_Id, Tanggal_ditugaskan, Tenggat_Waktu, Nomor_Surat, Id_Disposisi_Pekerjaan) VALUES
+('P001', '2024-07-01', '2024-07-15 23:59:59', 'S001', 'D001' ),
+('P002', '2024-07-05', '2024-07-20 23:59:59', 'S002', 'D002'),
+('P003', '2024-07-10', '2024-07-25 23:59:59', 'S003', 'D003'),
+('P004', '2024-07-12', '2024-07-22 23:59:59', 'S004', 'D004'),
+('P005', '2024-07-15', '2024-07-30 23:59:59', 'S005', 'D005');
+
+
+INSERT INTO magang.Workload (Id_Pekerjaan, Id_Pegawai, Status_Pekerjaan, Feedback) VALUES
+('P001', 'PG01', 'Selesai', 'Distribusi berjalan lancar dan sesuai jadwal'),
+('P001', 'PG07', 'Sedang dikerjakan', 'Masih dalam proses distribusi'),
+('P002', 'PG03', 'Selesai', 'Koordinasi berhasil dilakukan dengan baik'),
+('P002', 'PG12', 'Sedang dikerjakan', 'Masih dalam tahap koordinasi'),
+('P003', 'PG05', 'Selesai', 'Informasi telah disampaikan ke sekolah-sekolah');
+
+CREATE VIEW magang.Disposisi AS
+SELECT
+    Pegawai_Id, 
+    Pekerjaan_Id,
+    No_Surat
+FROM
+    magang.Pegawai 
+JOIN
+    magang.Pekerjaan  ON Pekerjaan_Id = Pekerjaan_Id
+JOIN
+    magang.SuratDisposisi ON Nomor_Surat = No_Surat;
